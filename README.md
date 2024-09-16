@@ -1,6 +1,7 @@
 # Clone the Repository Clone the project to your local machine using the following command:
 git clone https://github.com/coder-aahil/BN.git
 cd BalanceNutrition2
+git pull origin sachin
 
 # Install Dependencies Install the required dependencies from the package.json file by running:
 npm install
