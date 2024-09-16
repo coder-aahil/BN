@@ -1,118 +1,133 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+// App.tsx
+import * as React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
+  Button,
   Text,
-  useColorScheme,
   View,
+  TouchableOpacity,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
+  StyleSheet,
 } from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {NavigationProp, RouteProp} from '@react-navigation/native'; // For typing navigation and routes
+import COLORS from './src/utils/colors/Colors';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import FoodRecallDetailsScreen from './src/components/screens/DietRecallScreen/FoodRecallDetailsScreen';
+import WorkoutMealDetailsScreen from './src/components/screens/DietRecallScreen/WorkoutMealDetailsScreen';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+// Define the types for the routes in the navigator
+type RootStackParamList = {
+  FoodRecallDetailsScreen: undefined;
+  WorkoutMealDetailsScreen: undefined;
+  Details: {itemId: number; otherParam?: string};
+};
 
-type SectionProps = PropsWithChildren<{
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+// Define props for HeaderBackButtonWithTitle
+type HeaderBackButtonWithTitleProps = {
+  navigation: NavigationProp<any>;
   title: string;
-}>;
+  textcolor?: string;
+};
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const HeaderBackButtonWithTitle: React.FC<HeaderBackButtonWithTitleProps> = ({
+  navigation,
+  title,
+  textcolor,
+}) => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.container}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <Icon
+          size={24}
+          name="arrow-back"
+          color={textcolor || COLORS.defaultText}
+        />
+      </TouchableOpacity>
+      <View>
+        <Text
+          style={[styles.title, {color: textcolor || COLORS.defaultText}]}
+          numberOfLines={1}>
+          {title}
+        </Text>
+      </View>
+      <TouchableOpacity activeOpacity={0.8} style={{}} onPress={() => {}}>
+        <Icon
+          size={24}
+          name="headset-mic"
+          color={textcolor || COLORS.defaultText}
+        />
+      </TouchableOpacity>
     </View>
   );
-}
+};
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+// Define the main App component
+const App: React.FC = () => {
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="FoodRecallDetailsScreen">
+        <Stack.Screen
+          name="FoodRecallDetailsScreen"
+          component={FoodRecallDetailsScreen}
+          options={({navigation}) => ({
+            title: '',
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+            headerShadowVisible: false,
+            headerLeft: () => (
+              <HeaderBackButtonWithTitle
+                navigation={navigation}
+                title={'Food Recall Details'}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="WorkoutMealDetailsScreen"
+          component={WorkoutMealDetailsScreen}
+          options={({navigation}) => ({
+            title: '',
+
+            headerShadowVisible: false,
+            headerLeft: () => (
+              <HeaderBackButtonWithTitle
+                navigation={navigation}
+                title={'Workout Meal Details'}
+              />
+            ),
+          })}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default App;
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'white',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    flex: 1,
+    marginLeft: -16,
+    marginRight: 16,
+  },
+  backButton: {},
+
+  title: {
+    fontSize: 18,
+    marginHorizontal: 5,
+  },
+});
